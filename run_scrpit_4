@@ -4,6 +4,7 @@ declare -a arry_dl1=(N:32:128:4 N:64:128:6)
 declare -a arry_dl2=(S:64:128:8 S:128:128:8)
 declare -a arrOut=()
 declare -a arrPid=()
+exc=0
 for i in 49
 do
         square_root=$(awk -v x=$i 'BEGIN{print sqrt(x)}')
