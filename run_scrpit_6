@@ -1,11 +1,12 @@
 #!/bin/bash
 
+declare -a arry_core=(2048:32 1024:32 1536:32)
 declare -a arry_dl1=(N:32:128:4 N:64:128:6)
 declare -a arry_dl2=(S:64:128:8 S:128:128:8)
 declare -a arrOut=()
 declare -a arrPid=()
 exc=0
-for i in 81
+for i in 100
 do
         square_root=$(awk -v x=$i 'BEGIN{print sqrt(x)}')
         # echo "Test for i loop: $i"
@@ -14,28 +15,34 @@ do
                 # echo "Test for MC loop: $MC"
                 SM=$(($i-$MC))
                 # echo "Test for i-j: $SM"
-                for SHMEM in 8 16 32 64 128
+                for SHMEM in 8 16 32 64
                 do
-                        # echo "test output shmem: $j"
-                        for SHAD in 24 48 96 192
+                        for SHAD in 12 24 48
                         do
-                                # echo "test output shader: $k"
-                                for DL1 in "${arry_dl1[@]}"
+                        # echo "test output shmem: $j"
+                                for CORE in "${arry_core}"
                                 do
-                                        # echo "test output dl1: $l"
-                                        for DL2 in "${arry_dl2[@]}"
+                                        for DL1 in "${arry_dl1[@]}"
                                         do
-                                                # echo "test output dl2: $m"
-                                                python3.8 auto.py $SM $MC $SHMEM $SHAD $DL1 $DL2
-                                                sleep 10
-                                                #./ispass-2009-BFS data/graph4096.txt > pytest_${SM}_${MC}.txt &
-                                                ./ispass-2009-BFS data/graph4096.txt > pytest_${SM}_${MC}_${SHMEM}_${SHAD}_${DL1}_${DL2}.txt &
-                                                foo=$!
-                                                arrOut+=("pytest_${SM}_${MC}_${SHMEM}_${SHAD}_${DL1}_${DL2}.txt")
-                                                arrPid+=($foo)
-                                                # save current .txt and PID to arry entry
-                                                exc=$((exc+1))
-                                                sleep 10
+                                                # echo "test output shader: $k"
+                                                for L1L in 20 35 82
+                                                do
+                                                # echo "test output dl1: $l"
+                                                        for DL2 in "${arry_dl2[@]}"
+                                                        do
+                                                                # echo "test output dl2: $m"
+                                                                python3.8 auto.py $SM $MC $SHMEM $SHAD $CORE $DL1 $L1L $DL2
+                                                                sleep 10
+                                                                #./ispass-2009-BFS data/graph4096.txt > pytest_${SM}_${MC}.txt &
+                                                                ./ispass-2009-BFS data/graph4096.txt > pytest_${SM}_${MC}_${SHMEM}_${SHAD}_${CORE}_${DL1}_${L1L}_${DL2}.txt &
+                                                                foo=$!
+                                                                arrOut+=("pytest_${SM}_${MC}_${SHMEM}_${SHAD}_${CORE}_${DL1}_${L1L}_${DL2}.txt")
+                                                                arrPid+=($foo)
+                                                                # save current .txt and PID to arry entry
+                                                                exc=$((exc+1))
+                                                                sleep 10
+                                                        done
+                                                done
                                         done
                                 done
                         done
